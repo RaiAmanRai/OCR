@@ -1,4 +1,4 @@
-FROM pytorch/pytorch
+FROM nvcr.io/nvidia/pytorch:22.06-py3
 
 # if you forked EasyOCR, you can pass in your own GitHub username to use your fork
 # i.e. gh_username=myname
@@ -26,9 +26,9 @@ RUN mkdir "$service_home" \
     && git remote add upstream "https://github.com/RaiAmanRai/OCR.git" \
     && git pull upstream master
 
-RUN git clone --recursive -b jax-jp4.6.1-trt7 https://github.com/akamboj2/torch2trt.git torch2trt && \
+RUN git clone https://github.com/akamboj2/torch2trt.git torch2trt && \
     cd torch2trt && \
-    sudo python3 setup.py install --plugins
+    python3 setup.py install --plugins
 
 # Build
 RUN cd "$service_home" \
