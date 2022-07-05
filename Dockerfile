@@ -28,7 +28,7 @@ RUN mkdir "$service_home" \
 
 RUN git clone --recursive -b jax-jp4.6.1-trt7 https://github.com/akamboj2/torch2trt.git torch2trt && \
     cd torch2trt && \
-    sudo python3 setup.py install --plugins
+    python3 setup.py install --plugins
 
 # Build
 RUN cd "$service_home" \
