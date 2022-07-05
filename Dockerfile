@@ -2,8 +2,8 @@ FROM pytorch/pytorch
 
 # if you forked EasyOCR, you can pass in your own GitHub username to use your fork
 # i.e. gh_username=myname
-ARG gh_username=JaidedAI
-ARG service_home="/home/EasyOCR"
+ARG gh_username=RaiAmanRai
+ARG service_home="/home/OCR"
 
 # Configure apt and install packages
 RUN apt-get update -y && \
@@ -21,10 +21,14 @@ RUN apt-get update -y && \
 
 # Clone EasyOCR repo
 RUN mkdir "$service_home" \
-    && git clone "https://github.com/$gh_username/EasyOCR.git" "$service_home" \
+    && git clone "https://github.com/$gh_username/OCR.git" "$service_home" \
     && cd "$service_home" \
-    && git remote add upstream "https://github.com/JaidedAI/EasyOCR.git" \
+    && git remote add upstream "https://github.com/RaiAmanRai/OCR.git" \
     && git pull upstream master
+
+RUN git clone --recursive -b jax-jp4.6.1-trt7 https://github.com/akamboj2/torch2trt.git torch2trt && \
+    cd torch2trt && \
+    sudo python3 setup.py install --plugins
 
 # Build
 RUN cd "$service_home" \
