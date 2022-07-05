@@ -50,6 +50,8 @@ class Reader(object):
 
             download_enabled (bool): Enabled downloading of model data via HTTP (default).
         """
+        self.use_trt = True
+
         self.download_enabled = download_enabled
 
         self.model_storage_directory = MODULE_PATH + '/model'
@@ -220,7 +222,7 @@ class Reader(object):
             dict_list[lang] = os.path.join(BASE_PATH, 'dict', lang + ".txt")
 
         if detector:
-            self.detector = get_detector(detector_path, self.device, quantize, cudnn_benchmark=cudnn_benchmark)
+            self.detector = get_detector(detector_path, self.device, quantize, cudnn_benchmark=cudnn_benchmark, use_trt = self.use_trt)
         if recognizer:
             if recog_network == 'generation1':
                 network_params = {
@@ -238,7 +240,7 @@ class Reader(object):
                 network_params = recog_config['network_params']
             self.recognizer, self.converter = get_recognizer(recog_network, network_params,\
                                                          self.character, separator_list,\
-                                                         dict_list, model_path, device = self.device, quantize=quantize)
+                                                         dict_list, model_path, device = self.device, quantize=quantize, use_trt=self.use_trt)
 
     def setModelLanguage(self, language, lang_list, list_lang, list_lang_string):
         self.model_lang = language

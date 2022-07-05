@@ -9,6 +9,11 @@ import numpy as np
 from .craft_utils import getDetBoxes, adjustResultCoordinates
 from .imgproc import resize_aspect_ratio, normalizeMeanVariance
 from .craft import CRAFT
+from torch2trt import torch2trt,TRTModule
+import os
+import time
+
+
 
 def copyStateDict(state_dict):
     if list(state_dict.keys())[0].startswith("module"):
@@ -71,7 +76,7 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
 
     return boxes_list, polys_list
 
-def get_detector(trained_model, device='cpu', quantize=True, cudnn_benchmark=False):
+def get_detector(trained_model, device='cpu', quantize=True, cudnn_benchmark=False, use_trt=True):
     net = CRAFT()
 
     if device == 'cpu':
@@ -87,6 +92,20 @@ def get_detector(trained_model, device='cpu', quantize=True, cudnn_benchmark=Fal
         cudnn.benchmark = cudnn_benchmark
 
     net.eval()
+    if use_trt:
+        sample_input = torch.randn((1, 3, 480, 640),dtype=torch.float).cuda()
+        if os.path.isfile('detector_trt.pth'):
+            print("Loading TRT detector")
+            net_trt = TRTModule()
+            net_trt.load_state_dict(torch.load('detector_trt.pth'))
+        else:
+            net_trt = torch2trt(net,[sample_input])
+            print("Finished converting detector to TRT")
+            torch.save(net_trt.state_dict(),'detector_trt.pth')
+        print("Testing TRT Model Difference:")
+        print(torch.max(torch.abs(net_trt(sample_input)[0] - net(sample_input)[0])))
+        print(torch.max(torch.abs(net_trt(sample_input)[1] - net(sample_input)[1])))
+        net = net_trt
     return net
 
 def get_textbox(detector, image, canvas_size, mag_ratio, text_threshold, link_threshold, low_text, poly, device, optimal_num_chars=None):

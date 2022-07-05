@@ -9,6 +9,9 @@ from collections import OrderedDict
 import importlib
 from .utils import CTCLabelConverter
 import math
+from torch2trt import torch2trt,TRTModule
+import os
+import time
 
 def custom_mean(x):
     return x.prod()**(2.0/np.sqrt(len(x)))
@@ -152,7 +155,7 @@ def recognizer_predict(model, converter, test_loader, batch_max_length,\
 
 def get_recognizer(recog_network, network_params, character,\
                    separator_list, dict_list, model_path,\
-                   device = 'cpu', quantize = True):
+                   device = 'cpu', quantize = True, use_trt=True):
 
     converter = CTCLabelConverter(character, separator_list, dict_list)
     num_class = len(converter.character)
@@ -180,6 +183,22 @@ def get_recognizer(recog_network, network_params, character,\
     else:
         model = torch.nn.DataParallel(model).to(device)
         model.load_state_dict(torch.load(model_path, map_location=device))
+
+    if use_trt:
+        sample_input = torch.randn((1,1,64,896),dtype=torch.float).cuda()
+        model.eval()
+        if os.path.isfile('recognizer_trt.pth'):
+            print("Loading TRT recognizer")
+            model_trt = TRTModule()
+            model_trt.load_state_dict(torch.load('recognizer_trt.pth'))
+        else:
+            print("Converting recognizer to TRT")
+            model_trt = torch2trt(model,[sample_input])
+            torch.save(model_trt.state_dict(),'recognizer_trt.pth')
+        print("Testing TRT Model Difference:")
+        sample_input = torch.randn((1,1,64,896),dtype=torch.float).cuda()
+        print(torch.max(torch.abs(model_trt(sample_input) - model(sample_input))))
+        model = model_trt
 
     return model, converter
 
