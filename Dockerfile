@@ -26,9 +26,9 @@ RUN mkdir "$service_home" \
     && git remote add upstream "https://github.com/RaiAmanRai/OCR.git" \
     && git pull upstream master
 
-RUN git clone https://github.com/akamboj2/torch2trt.git torch2trt && \
+RUN git clone --recursive -b jax-jp4.6.1-trt7 https://github.com/akamboj2/torch2trt.git torch2trt && \
     cd torch2trt && \
-    python3 setup.py install --plugins
+    python3 setup.py install
 
 # Build
 RUN cd "$service_home" \
