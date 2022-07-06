@@ -26,9 +26,9 @@ RUN mkdir "$service_home" \
     && git remote add upstream "https://github.com/RaiAmanRai/OCR.git" \
     && git pull upstream master
 
-RUN git clone https://github.com/NVIDIA-AI-IOT/torch2trt torch2trt && \
-    cd torch2trt && \
-    python3 setup.py install
+# RUN git clone https://github.com/NVIDIA-AI-IOT/torch2trt torch2trt && \
+#     cd torch2trt && \
+#     python3 setup.py install
 
 # Build
 RUN cd "$service_home" \
