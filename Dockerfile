@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/l4t-pytorch:r32.6.1-pth1.9-py3
+FROM nvcr.io/nvidia/pytorch:22.06-py3
 
 # if you forked EasyOCR, you can pass in your own GitHub username to use your fork
 # i.e. gh_username=myname
