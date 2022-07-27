@@ -50,7 +50,7 @@ class Reader(object):
 
             download_enabled (bool): Enabled downloading of model data via HTTP (default).
         """
-        self.use_trt = True
+        self.use_trt = False
 
         self.download_enabled = download_enabled
 

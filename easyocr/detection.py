@@ -9,7 +9,7 @@ import numpy as np
 from .craft_utils import getDetBoxes, adjustResultCoordinates
 from .imgproc import resize_aspect_ratio, normalizeMeanVariance
 from .craft import CRAFT
-from torch2trt import torch2trt,TRTModule
+# from torch2trt import torch2trt,TRTModule
 import os
 import time
 

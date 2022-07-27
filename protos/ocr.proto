@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+// The service definition.
+service OCRService {
+  rpc OCR (OCRRequest) returns (OCRResponse) {}
+
+}
+
+// #################### OCR ###########################
+
+message OCRRequest {
+  string uuid = 1;
+  string language = 2;
+  bytes image = 3;
+}
+
+message Coordinates {
+ repeated int64 i = 1;
+}
+
+message OCRText {
+  string text = 1;
+  float confidence = 2;
+  repeated Coordinates coordinates = 3; 
+}
+
+message OCRResponse {
+  string uuid = 1;
+  string language = 2;
+  repeated OCRText text = 6;
+}

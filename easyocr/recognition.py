@@ -9,7 +9,7 @@ from collections import OrderedDict
 import importlib
 from .utils import CTCLabelConverter
 import math
-from torch2trt import torch2trt,TRTModule
+# from torch2trt import torch2trt,TRTModule
 import os
 import time
 
