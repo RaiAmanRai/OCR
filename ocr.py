@@ -6,7 +6,7 @@ def get_text(image, lang, cust_id):
     """Driver pipeline for ocr
 
     param
-        image : byte array
+        image : bytes
         lang : language for recognition
         cust_id : cutomer id
 
